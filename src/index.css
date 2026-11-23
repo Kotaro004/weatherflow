@@ -76,3 +76,16 @@ body{
    max(16px,env(safe-area-inset-left));
  }
 }
+
+/* iOS Safari: one continuous canvas behind the safe areas and overscroll */
+:root{color-scheme:dark;background:#111a2a;min-height:100vh;min-height:100dvh}
+:root[data-theme="light"]{color-scheme:light;background:#dbe8f8}
+html,body,#root{min-height:100vh;min-height:100dvh;background:#111a2a}
+:root[data-theme="light"] html,:root[data-theme="light"] body,:root[data-theme="light"] #root{background:#dbe8f8}
+html,body{overscroll-behavior-y:none;-webkit-overflow-scrolling:touch}
+body{overflow-x:clip}
+.app-shell{min-height:100vh;min-height:100dvh;position:relative;isolation:isolate;overflow:visible;background:transparent}
+:root[data-theme="light"] .app-shell{background:transparent}
+.weather-bg{position:fixed;inset:0;z-index:-1;width:100%;height:100%;min-height:100vh;min-height:100dvh;overflow:hidden;pointer-events:none}
+.app-content{z-index:1;width:min(1160px,100%);padding:max(28px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(40px,calc(env(safe-area-inset-bottom) + 32px)) max(20px,env(safe-area-inset-left))}
+@media(max-width:560px){.app-content{width:100%;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(48px,calc(env(safe-area-inset-bottom) + 36px)) max(16px,env(safe-area-inset-left))}}
