@@ -6,7 +6,7 @@ export default function App(){
  const geo=useGeolocation(),{weather,loading,error,retry}=useWeather(location.latitude,location.longitude);
  useEffect(()=>{const media=window.matchMedia('(prefers-color-scheme: dark)'),change=e=>setSystemDark(e.matches);media.addEventListener('change',change);return()=>media.removeEventListener('change',change)},[]);
  const activeTheme=theme==='system'?(systemDark?'dark':'light'):theme;
- useEffect(()=>{document.documentElement.dataset.theme=activeTheme},[activeTheme]);
+ useEffect(()=>{document.documentElement.dataset.theme=activeTheme;const color=activeTheme==='light'?'#dbe8f8':'#111a2a';document.querySelectorAll('meta[name="theme-color"]').forEach(meta=>meta.setAttribute('content',color))},[activeTheme]);
  useEffect(()=>{if(geo.location)setLocation({...geo.location,name:'Mi ubicación',admin:'Ubicación actual',country:''})},[geo.location,setLocation]);
  const condition=useMemo(()=>weather?getWeatherInfo(weather.current.weather_code):{type:'clear'},[weather]);
  const toggleFavorite=item=>{if(item){setFavorites(prev=>prev.filter(x=>x.latitude!==item.latitude||x.longitude!==item.longitude));return}setFavorites(prev=>prev.some(x=>x.latitude===location.latitude&&x.longitude===location.longitude)?prev:[...prev,location])};
