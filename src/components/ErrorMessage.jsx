@@ -1,0 +1,1 @@
+import React from'react';export default function ErrorMessage({message,onRetry}){return <div className="error-panel" role="alert"><span>!</span><div><b>No se han podido cargar los datos</b><p>{message}</p><button onClick={onRetry}>Volver a intentar</button></div></div>}

@@ -1,0 +1,1 @@
+export const temperature=(v,u='C')=>v==null?'--':Math.round(u==='F'?v*9/5+32:v)+'°';export const wind=(v,u='kmh')=>v==null?'--':Math.round(u==='mph'?v*.621371:v)+' '+(u==='mph'?'mph':'km/h');export const pressure=v=>v==null?'--':Math.round(v)+' hPa';export const visibility=v=>v==null?'--':v>=1000?(v/1000).toFixed(1)+' km':Math.round(v)+' m';

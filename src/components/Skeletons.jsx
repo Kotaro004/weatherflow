@@ -1,0 +1,1 @@
+import React from'react';export default function Skeletons(){return <div className="skeleton-layout" aria-label="Cargando previsión"><div className="glass-card skeleton"><i/><i/><i/></div><div className="glass-card skeleton"><i/><i/><i/><i/></div></div>}

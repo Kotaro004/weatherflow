@@ -1,0 +1,1 @@
+export const time=v=>v?new Intl.DateTimeFormat('es-ES',{hour:'2-digit',minute:'2-digit'}).format(new Date(v)):'--:--';export const hour=v=>v?new Intl.DateTimeFormat('es-ES',{hour:'2-digit'}).format(new Date(v)):'--';export const day=v=>v?new Intl.DateTimeFormat('es-ES',{weekday:'short',day:'numeric'}).format(new Date(v+'T12:00:00')):'--';

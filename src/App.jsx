@@ -1,0 +1,20 @@
+import React,{useEffect,useMemo,useState}from'react';
+import SearchBar from'./components/SearchBar';import CurrentWeather from'./components/CurrentWeather';import HourlyForecast from'./components/HourlyForecast';import TemperatureChart from'./components/TemperatureChart';import DailyForecast from'./components/DailyForecast';import WeatherBackground from'./components/WeatherBackground';import Favorites from'./components/Favorites';import UnitToggle from'./components/UnitToggle';import ThemeToggle from'./components/ThemeToggle';import Skeletons from'./components/Skeletons';import ErrorMessage from'./components/ErrorMessage';import useWeather from'./hooks/useWeather';import useGeolocation from'./hooks/useGeolocation';import useLocalStorage from'./hooks/useLocalStorage';import{getWeatherInfo}from'./utils/weatherCodes';
+const DEFAULT={name:'Barcelona',admin:'Cataluña',country:'España',latitude:41.3851,longitude:2.1734};
+export default function App(){
+ const[location,setLocation]=useLocalStorage('wf-location',DEFAULT),[favorites,setFavorites]=useLocalStorage('wf-favorites',[]),[unit,setUnit]=useLocalStorage('wf-temperature','C'),[windUnit,setWindUnit]=useLocalStorage('wf-wind','kmh'),[theme,setTheme]=useLocalStorage('wf-theme','system'),[systemDark,setSystemDark]=useState(()=>window.matchMedia('(prefers-color-scheme: dark)').matches);
+ const geo=useGeolocation(),{weather,loading,error,retry}=useWeather(location.latitude,location.longitude);
+ useEffect(()=>{const media=window.matchMedia('(prefers-color-scheme: dark)'),change=e=>setSystemDark(e.matches);media.addEventListener('change',change);return()=>media.removeEventListener('change',change)},[]);
+ const activeTheme=theme==='system'?(systemDark?'dark':'light'):theme;
+ useEffect(()=>{document.documentElement.dataset.theme=activeTheme},[activeTheme]);
+ useEffect(()=>{if(geo.location)setLocation({...geo.location,name:'Mi ubicación',admin:'Ubicación actual',country:''})},[geo.location,setLocation]);
+ const condition=useMemo(()=>weather?getWeatherInfo(weather.current.weather_code):{type:'clear'},[weather]);
+ const toggleFavorite=item=>{if(item){setFavorites(prev=>prev.filter(x=>x.latitude!==item.latitude||x.longitude!==item.longitude));return}setFavorites(prev=>prev.some(x=>x.latitude===location.latitude&&x.longitude===location.longitude)?prev:[...prev,location])};
+ return <main className="app-shell"><WeatherBackground type={condition.type} isDay={weather?Boolean(weather.current.is_day):true}/><div className="app-content">
+ <header className="topbar"><a className="brand" href="#top" aria-label="WeatherFlow inicio"><span className="brand-mark">W</span><span>weather<span>flow</span></span></a><div className="header-actions"><UnitToggle unit={unit} windUnit={windUnit} onUnit={setUnit} onWind={setWindUnit}/><ThemeToggle theme={activeTheme} onToggle={()=>setTheme(activeTheme==='dark'?'light':'dark')}/></div></header>
+ <section className="intro" id="top"><div><span className="eyebrow">EL TIEMPO, CON OTRA PERSPECTIVA</span><h1>El cielo de hoy,<br/><em>a tu manera.</em></h1><p>Previsión precisa para cada momento de tu día.</p></div><span className="live-indicator"><i/> DATOS EN DIRECTO</span></section>
+ <SearchBar onSelect={setLocation} onLocate={geo.getLocation} locating={geo.loading}/>{geo.error&&<p className="inline-error" role="alert">{geo.error}</p>}
+ <Favorites items={favorites} current={location} onSelect={setLocation} onToggle={toggleFavorite}/>
+ {loading&&!weather?<Skeletons/>:error&&!weather?<ErrorMessage message={error} onRetry={retry}/>:weather&&<><div className="dashboard-grid"><CurrentWeather weather={weather} location={location} unit={unit} windUnit={windUnit}/><div className="right-column"><HourlyForecast weather={weather} unit={unit}/><TemperatureChart weather={weather} unit={unit}/></div></div><DailyForecast weather={weather} unit={unit} windUnit={windUnit}/>{error&&<p className="inline-error">{error}</p>}</>}
+ <footer><span>WEATHERFLOW</span><span>Datos meteorológicos de <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a></span></footer></div></main>
+}

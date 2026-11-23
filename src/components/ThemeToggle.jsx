@@ -1,0 +1,1 @@
+import React from'react';export default function ThemeToggle({theme,onToggle}){return <button className="theme-toggle" onClick={onToggle} aria-label={theme==='dark'?'Activar modo claro':'Activar modo oscuro'}>{theme==='dark'?'☼':'☾'}</button>}
